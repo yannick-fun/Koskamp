@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
-use App\Models\CartItem;
 use App\Models\Product;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Client\Factory;
@@ -22,12 +21,11 @@ class CartController extends Controller
 
     public function index(): Application|Factory|View
     {
-        $cart = Cart::with(['cartItems.product'])->find(46);
-
-        if ($cart === null) {
-            $cart = $this->getCart(46);
+        if (auth()->user()->cart === null) {
+            $cart = $this->createCart(auth()->user()->id);
+        } else {
+            $cart = Cart::with(['cartItems.product'])->find(auth()->user()->cart->id);
         }
-
         return view('pages.cart', [
             'cart' => $cart
         ]);
@@ -35,7 +33,11 @@ class CartController extends Controller
 
     public function addItem(Request $request): RedirectResponse
     {
-        $cart = $this->getCart(46);
+        $cart = Cart::where('user_id', auth()->user()->id)->first();
+
+        if ($cart === null) {
+            $cart = $this->createCart(auth()->user()->id);
+        }
 
         $product = Product::findOrFail($request->input('product'));
 
@@ -57,15 +59,11 @@ class CartController extends Controller
         return redirect()->route('cart_index');
     }
 
-    public function getCart(int $userId): Cart
+    public function createCart(int $userId)
     {
-        $cart = Cart::find($userId); //TODO aan user koppelen
-
-        if ($cart === null) {
-            $cart = new Cart();
-            $cart->user_id = 1; //todo
-            $cart->save();
-        }
+        $cart = new Cart();
+        $cart->user_id = $userId;
+        $cart->save();
 
         return $cart;
     }

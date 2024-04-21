@@ -49,7 +49,7 @@
                                                         <div style="width: 120px;">
                                                             <h5 class="mb-0">€{{ number_format($item->product->price * $item->amount / 100, 2) }},-</h5>
                                                         </div>
-                                                        <form action="{{ route('delete_product', ['item' => $item->id]) }}" method="POST">
+                                                        <form action="{{ route('delete_product', ['cartItem' => $item->id]) }}" method="POST">
                                                             @csrf
                                                             @method('DELETE')
                                                             <input type="hidden" value="{{ $item->id }}">

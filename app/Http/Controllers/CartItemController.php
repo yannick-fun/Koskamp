@@ -29,13 +29,15 @@ class CartItemController extends Controller
 
     public function createCartItem(int $productId, Request $request): CartItem
     {
-//        $cartItem = CartItem::findOrFail($cartItemId);
+        $cartItem = CartItem::where('cart_id', auth()->user()->cart->id)
+            ->where('product_id', $productId)
+            ->first();
 
-//        if ($cartItem === null) {
+        if ($cartItem === null) {
             $cartItem = new CartItem();
-//        }
+            $cartItem->product_id = $productId;
+        }
 
-        $cartItem->product_id = $productId;
         $cartItem->amount = $request->input('amount');
 
         return $cartItem;
