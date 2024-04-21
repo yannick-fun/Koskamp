@@ -1,126 +1,38 @@
 <?php
 
+namespace Tests\Feature;
 
+use App\Http\Controllers\ProductController;
 use App\Models\Product;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\View\View;
 use Tests\TestCase;
 
 class ProductTest extends TestCase
 {
-    /**
-     * A feature test to get all product data
-     * @return void
-     */
-    public function test_to_get_all_products_data(): void
+    use RefreshDatabase;
+
+    public function can_return_all_products_in_the_index_page()
     {
-        $response = $this->get('/api/v1/items')
-            ->assertStatus(200)
-            ->assertJsonStructure(
-                [
-                    '*' => [
-                        "id",
-                        "name",
-                        "price",
-                        "description",
-                    ],
+        $products = Product::factory()->count(3)->create();
+        $controller = new ProductController();
 
-                ]
-            );
+        $view = $controller->index();
 
+        $this->assertInstanceOf(View::class, $view);
+        $this->assertArrayHasKey('products', $view->getData());
+        $this->assertCount(3, $view->getData()['products']);
     }
 
-    /**
-     * A feature test to add a new product
-     *
-     * @return void
-     */
-    public function test_for_add_product(): void
+    public function can_return_a_specific_product_in_the_show_page()
     {
+        $product = Product::factory()->create();
+        $controller = new ProductController();
 
-        $product = Product::create([
-            'name' => fake()->word(),
-            'price' => fake()->numberBetween(0, 1000),
-            'description' => fake()->sentence(12),
-            'image' => fake()->url(),
-        ]);;
+        $view = $controller->show($product);
 
-        $payload = [
-            "name" => $product->name,
-            "price" => $product->price,
-            'description' => $product->description,
-            'image' => $product->image,
-        ];
-
-        $this->json('POST', 'api/v1/items', $payload)
-            ->assertStatus(200)
-            ->assertJson([
-                'code' => '200',
-                'message' => 'New Product created.',
-            ]);
+        $this->assertInstanceOf(View::class, $view);
+        $this->assertArrayHasKey('product', $view->getData());
+        $this->assertEquals($product->id, $view->getData()['product']->id);
     }
-
-    /**
-     * A feature test to get active product data based on product ID
-     *
-     * @return void
-     */
-    public function test_get_product_by_id(): void
-    {
-        $product_id = Product::get()->random()->id;
-        $response = $this->get('/api/v1/items/' . $product_id)
-            ->assertStatus(200)
-            ->assertJsonStructure(
-                [
-                    '*' => [
-                        "id",
-                        "name",
-                        "price",
-                        "description",
-                    ],
-                ]
-            );
-    }
-
-
-    /**
-     * A feature test to update product based on product ID
-     *
-     * @return void
-     */
-    public function test_for_update_product(): void
-    {
-        $payload = [
-            "name" => fake()->word(),
-            'price' => fake()->numberBetween(0, 1000),
-            'description' => fake()->sentence(12),
-            'updated_at' => fake()->date('Y-m-d', 'now'),
-
-        ];
-        $product_id = Product::get()->random()->id;
-
-        $this->json('PUT', 'api/v1/items/' . $product_id, $payload)
-            ->assertStatus(200)
-            ->assertJson([
-                'code' => '200',
-                'message' => 'Product updated.',
-            ]);
-    }
-
-
-    /**
-     * A feature test to delete hotel review data
-     *
-     * @return void
-     */
-    public function test_for_delete_product(): void
-    {
-        $product_id = Product::get()->random()->id;
-
-        $this->json('DELETE', 'api/v1/items/' . $product_id)
-            ->assertStatus(200)
-            ->assertJson([
-                'code' => '200',
-                'message' => 'product removed successfully.',
-            ]);
-    }
-
 }

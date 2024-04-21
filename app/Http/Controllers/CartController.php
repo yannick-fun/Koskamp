@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Product;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Http\RedirectResponse;
@@ -26,8 +27,10 @@ class CartController extends Controller
         } else {
             $cart = Cart::with(['cartItems.product'])->find(auth()->user()->cart->id);
         }
+
         return view('pages.cart', [
-            'cart' => $cart
+            'cart' => $cart,
+            'totalPrice' => $this->getTotalPrice($cart->cartItems()->get())
         ]);
     }
 
@@ -59,12 +62,23 @@ class CartController extends Controller
         return redirect()->route('cart_index');
     }
 
-    public function createCart(int $userId)
+    public function createCart(int $userId): Cart
     {
         $cart = new Cart();
         $cart->user_id = $userId;
         $cart->save();
 
         return $cart;
+    }
+
+    public function getTotalPrice(Collection $cartItems): int
+    {
+        $totalPrice = 0;
+
+        foreach ($cartItems as $cartItem) {
+            $totalPrice += $cartItem->product->price * $cartItem->amount;
+        }
+
+        return $totalPrice;
     }
 }

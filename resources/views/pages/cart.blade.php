@@ -15,6 +15,9 @@
                                     <div>
                                         <p class="mb-0">{{ !empty($cart->cartItems) ? count($cart->cartItems) : 0 }} items in cart</p>
                                     </div>
+                                    <div>
+                                        <p class="mb-0">Total price: €{{ number_format($totalPrice / 100, 2) }},-</p>
+                                    </div>
                                 </div>
                                 @if($cart !== null || count($cart->cartItems) !== 0)
                                     @foreach ($cart->cartItems as $item)
@@ -24,11 +27,12 @@
                                                     <div class="d-flex flex-row align-items-center">
                                                         <div style="width: 80px;">
                                                             <img
-                                                                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-shopping-carts/img1.webp"
+                                                                src="{{ $item->product->image }}"
                                                                 class="img-fluid rounded-3" alt="Shopping item" style="width: 65px;">
                                                         </div>
                                                         <div class="ms-3">
-                                                            <h5>{{ $item->product->name }}</h5>
+                                                            <h3>{{ $item->product->name }}</h3>
+                                                            <p>SKU: {{ $item->product->sku }}</p>
                                                         </div>
                                                     </div>
                                                     <div class="d-flex flex-row align-items-center">
@@ -40,7 +44,6 @@
                                                                 <input id="amountInput_{{ $item->id }}" class="form-control" name="amount" type="number" min="1" value="{{ $item->amount }}" style="max-width: 4rem" />
                                                             </form>
                                                         </div>
-
                                                         <script>
                                                             document.getElementById('amountInput_{{ $item->id }}').addEventListener('change', function() {
                                                                 document.getElementById('updateForm_{{ $item->id }}').submit();

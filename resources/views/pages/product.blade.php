@@ -11,6 +11,7 @@
                         <span class="text-decoration-line-through">€{{ number_format($product->price / 100, 2) }},-</span>
                     </div>
                     <p class="lead">{{ $product->description }}</p>
+                    <p>SKU: {{ $product->sku }}</p>
                     <form action="{{ route('add_product') }}" method="POST">
                         @csrf
                         <div class="d-flex">

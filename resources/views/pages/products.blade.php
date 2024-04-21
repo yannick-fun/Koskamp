@@ -10,9 +10,10 @@
                             <div class="card mb-4 shadow-sm" >
                                 <img src="https://fakeimg.pl/600x350" class="card-img-top" alt="">
                                 <div class="card-body">
-                                    <h5 class="card-title">{{ $product['name'] }}</h5>
-                                    <p class="card-text">{{ strlen($product['description']) > 100 ? substr($product['description'], 0, 100) . '...' : $product['description'] }}</p>
-                                    <a href="{{route('product_show', $product['id'])}}" class="btn btn-primary">Show</a>
+                                    <h5 class="card-title">{{ $product->name }}</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">SKU: {{ $product->sku }}</h6>
+                                    <p class="card-text">{{ strlen($product->description) > 100 ? substr($product->description, 0, 100) . '...' : $product->description }}</p>
+                                    <a href="{{ route('product_show', $product->id) }}" class="btn btn-primary">Show</a>
                                 </div>
                             </div>
                         </div>
