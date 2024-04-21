@@ -20,6 +20,9 @@ class CartController extends Controller
         $this->cartItemController = $cartItemController;
     }
 
+    /**
+     * Display the cart with all the item init.
+     */
     public function index(): Application|Factory|View
     {
         if (auth()->user()->cart === null) {
@@ -34,6 +37,9 @@ class CartController extends Controller
         ]);
     }
 
+    /**
+     * Add a product to the cart.
+     */
     public function addItem(Request $request): RedirectResponse
     {
         $cart = Cart::where('user_id', auth()->user()->id)->first();
@@ -52,6 +58,9 @@ class CartController extends Controller
         return redirect()->route('cart_index');
     }
 
+    /**
+     * Remove the cart and all products' init.
+     */
     public function removeCart(int $id): RedirectResponse
     {
         $cart = Cart::findOrFail($id);
@@ -62,6 +71,9 @@ class CartController extends Controller
         return redirect()->route('cart_index');
     }
 
+    /**
+     * Create a cart.
+     */
     public function createCart(int $userId): Cart
     {
         $cart = new Cart();
@@ -70,7 +82,9 @@ class CartController extends Controller
 
         return $cart;
     }
-
+    /**
+     * Get the total price of all products combined in the cart.
+     */
     public function getTotalPrice(Collection $cartItems): int
     {
         $totalPrice = 0;
