@@ -28,7 +28,7 @@ class CartController extends Controller
         if (auth()->user()->cart === null) {
             $cart = $this->createCart(auth()->user()->id);
         } else {
-            $cart = Cart::with(['cartItems.product'])->find(auth()->user()->cart->id);
+            $cart = Cart::with(['cartItems.product', 'discountCode'])->find(auth()->user()->cart->id);
         }
 
         return view('pages.cart', [
@@ -59,7 +59,7 @@ class CartController extends Controller
     }
 
     /**
-     * Remove the cart and all products' init.
+     * Remove the cart and all product's init.
      */
     public function removeCart(int $id): RedirectResponse
     {

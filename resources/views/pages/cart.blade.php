@@ -16,7 +16,13 @@
                                         <p class="mb-0">{{ !empty($cart->cartItems) ? count($cart->cartItems) : 0 }} items in cart</p>
                                     </div>
                                     <div>
-                                        <p class="mb-0">Total price: €{{ number_format($totalPrice / 100, 2) }},-</p>
+                                        <p class="mb-0">
+                                            @if($cart->discount_code_id !== null)
+                                                Total price with an {{ abs(($cart->discountCode->amount * 100) - 100) }}% discount: €{{ number_format((($totalPrice * $cart->discountCode->amount) / 100), 2) }},-
+                                            @else
+                                                Total price: €{{ number_format($totalPrice / 100, 2) }},-
+                                            @endif
+                                        </p>
                                     </div>
                                 </div>
                                 @if($cart !== null || count($cart->cartItems) !== 0)
@@ -41,7 +47,7 @@
                                                                 @csrf
                                                                 @method('PUT')
                                                                 <input type="hidden" value="{{ $item->id }}">
-                                                                <input id="amountInput_{{ $item->id }}" class="form-control" name="amount" type="number" min="1" value="{{ $item->amount }}" style="max-width: 4rem" />
+                                                                <input id="amountInput_{{ $item->id }}" class="form-control" name="amount" type="number" min="1" value="{{ $item->amount }}" style="max-width: 5rem" />
                                                             </form>
                                                         </div>
                                                         <script>
@@ -50,7 +56,13 @@
                                                             });
                                                         </script>
                                                         <div style="width: 120px;">
-                                                            <h5 class="mb-0">€{{ number_format($item->product->price * $item->amount / 100, 2) }},-</h5>
+                                                            <h5 class="mb-0">
+                                                                @if($cart->discount_code_id !== null)
+                                                                    €{{ number_format(($item->product->price * $cart->discountCode->amount) * $item->amount / 100, 2) }},-
+                                                                @else
+                                                                    €{{ number_format($item->product->price * $item->amount / 100, 2) }},-
+                                                                @endif
+                                                            </h5>
                                                         </div>
                                                         <form action="{{ route('delete_product', ['cartItem' => $item->id]) }}" method="POST">
                                                             @csrf
@@ -67,6 +79,32 @@
                                         </div>
                                     @endforeach
                                     <div class="d-flex">
+                                        @if($cart->discount_code_id !== null)
+                                            <form action="{{ route('remove_discount', ['cart' => $cart->id]) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <div class="d-flex">
+                                                    <input type="hidden" value="{{ $cart->id }}">
+                                                    <button type="submit" class="btn btn-outline-dark flex-shrink-0">
+                                                        <i class="bi-cart-fill me-1"></i>
+                                                        Remove Discount
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        @else
+                                            <form action="{{ route('add_discount', ['cart' => $cart->id]) }}" method="POST">
+                                                @csrf
+                                                @method('POST')
+                                                <div class="d-flex">
+                                                    <input type="hidden" value="{{ $cart->id }}">
+                                                    <input class="form-control text-center me-3" name="code" type="text" style="max-width: 12rem" placeholder="Discount Code"/>
+                                                    <button type="submit" class="btn btn-outline-dark flex-shrink-0">
+                                                        <i class="bi-cart-fill me-1"></i>
+                                                        Add Discount
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        @endif
                                         <form action="{{ route('delete_cart', ['cart' => $cart->id]) }}" method="POST" class="ml-auto">
                                             @csrf
                                             @method('DELETE')

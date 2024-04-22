@@ -14,4 +14,9 @@ class DiscountCode extends Model
     protected $guarded = [
         'id'
     ];
+
+    public function cart()
+    {
+        return $this->hasOne(Cart::class);
+    }
 }

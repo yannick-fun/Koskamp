@@ -26,13 +26,15 @@ return new class extends Migration
 
         Schema::create('discount_codes', function (Blueprint $table) {
             $table->id();
-            $table->integer('amount');
+            $table->string('code');
+            $table->float('amount', 2);
             $table->timestamps();
         });
 
         Schema::create('carts', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class)->constrained();
+            $table->foreignId('discount_code_id')->nullable()->constrained();
             $table->timestamps();
         });
 

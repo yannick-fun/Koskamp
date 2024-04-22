@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\DiscountCode;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -26,5 +27,10 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Product::factory(10)->create();
+
+        DiscountCode::factory()->create([
+            'code' => '12345',
+            'amount' => 0.75,
+        ]);
     }
 }

@@ -2,20 +2,17 @@
 
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CartItemController;
+use App\Http\Controllers\DiscountCodeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-
-//Route::get('/', function () {
-//    return view('welcome');
-//});
 
 Route::get('/', function () {
     return view('auth.login');
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return redirect('/products');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -32,6 +29,9 @@ Route::middleware('auth')->group(function () {
 
     Route::put('/cartItem/{cartItem:id}', [CartItemController::class, 'updateCartItem'])->name('update_product');
     Route::delete('/cartItem/{cartItem:id}', [CartItemController::class, 'removeCartItem'])->name('delete_product');
+
+    Route::post('/discount/{cart:id}', [DiscountCodeController::class, 'addDiscount'])->name('add_discount');
+    Route::delete('/discount/{cart:id}', [DiscountCodeController::class, 'removeDiscount'])->name('remove_discount');
 });
 
 require __DIR__ . '/auth.php';

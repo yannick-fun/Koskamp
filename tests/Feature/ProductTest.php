@@ -12,7 +12,7 @@ class ProductTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function can_return_all_products_in_the_index_page()
+    public function test_can_return_all_products_in_the_index_page()
     {
         $products = Product::factory()->count(3)->create();
         $controller = new ProductController();
@@ -24,7 +24,7 @@ class ProductTest extends TestCase
         $this->assertCount(3, $view->getData()['products']);
     }
 
-    public function can_return_a_specific_product_in_the_show_page()
+    public function test_can_return_a_specific_product_in_the_show_page()
     {
         $product = Product::factory()->create();
         $controller = new ProductController();

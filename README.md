@@ -20,7 +20,7 @@ Gemaakt door Yannick Achterstraat.
 - Voer het volgende commando uit: <code>npm run dev</code>
 - Voer het volgende commando uit: <code>php artisan serve</code> Open de gegeven URL om de applicatie te gebruiken.
 - Login met de volgende gegevens: E-mail: "customer@mail.com" Wachtwoord: "welkom123"
-- (Optineel) Voer de tetsen uit. <code>php artisan test</code> 
+- (Optioneel) Voer de testen uit. <code>php artisan test</code> 
   
 
 
